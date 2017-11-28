@@ -1,0 +1,75 @@
+group 'com.rdavis.swagger'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "com.rdavis.swagger.SwaggerDiff"
+
+sourceCompatibility = 1.8
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1"
+    }
+}
+
+apply plugin: "org.sonarqube"
+apply plugin: "jacoco"
+
+dependencies {
+    compile group: 'io.swagger', name: 'swagger-parser', version: '2.0.0-rc1'
+    compile group: 'io.airlift', name: 'airline', version: '0.8'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.5'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+
+    testCompile group: 'org.testng', name: 'testng', version: '6.11'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ["test/main/java"]
+        }
+        resources {
+            srcDirs = ["test/main/resources"]
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.rdavis.swagger.SwaggerDiff'
+        )
+    }
+    from configurations.compile.collect { entry -> zipTree(entry) }
+}
+
+test {
+    useTestNG()
+}
+
+jacoco {
+    toolVersion = "0.7.9"
+    reportsDir = file("$buildDir/jacoco-reports")
+}

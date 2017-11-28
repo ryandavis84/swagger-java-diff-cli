@@ -1,0 +1,17 @@
+/build/
+/bin/
+.classpath
+.gradle/
+.project
+.settings/
+target/
+.idea/
+out/
+*.iml
+*.tgz
+*.DS_STORE
+test/suiteLogDirs/
+test-output
+gradle/
+gradlew
+gradlew.bat
